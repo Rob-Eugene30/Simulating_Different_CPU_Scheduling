@@ -1,5 +1,5 @@
 import tkinter as tk
-from gui import WelcomePage, MenuPage, LRJFPage, RRPage, BattleRoyalPage
+from gui import WelcomePage, MenuPage, LRJFPage, RRPage, SRJFPage, BattleRoyalPage
 
 class CPUSchedulerApp(tk.Tk):
     def __init__(self):
@@ -12,7 +12,7 @@ class CPUSchedulerApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(fill="both", expand=True)
 
-        for F in (WelcomePage, MenuPage, LRJFPage, RRPage, BattleRoyalPage):
+        for F in (WelcomePage, MenuPage, LRJFPage, RRPage, SRJFPage, BattleRoyalPage):
             page_name = F.__name__
             frame = F(container, self)
             self.frames[page_name] = frame

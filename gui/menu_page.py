@@ -15,6 +15,8 @@ class MenuPage(tk.Frame):
                    command=lambda: controller.show_frame("LRJFPage")).pack(pady=10)
         ttk.Button(self, text="🟢 Round Robin",
                    command=lambda: controller.show_frame("RRPage")).pack(pady=10)
+        ttk.Button(self, text="🟡 Shortest Remaining Job First",
+                   command=lambda: controller.show_frame("SRJFPage")).pack(pady=10)
         ttk.Button(self, text="🏆 Battle Royale",
                    command=lambda: controller.show_frame("BattleRoyalPage")).pack(pady=10)
 
