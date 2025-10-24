@@ -28,13 +28,18 @@ class SRJFPage(tk.Frame):
             widget.destroy()
         self.entries.clear()
 
+        #HEADERS
+        tk.Label(self.table_frame, text="Process", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=0, padx=5, pady=5)
+        tk.Label(self.table_frame, text="Arrival Time", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=1, padx=5, pady=5)
+        tk.Label(self.table_frame, text="Burst Time", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=2, padx=5, pady=5)
+
         n = self.num_processes.get()
         for i in range(n):
-            tk.Label(self.table_frame, text=f"P{i+1}", fg="white", bg="#1e1e2f").grid(row=i, column=0, padx=5, pady=3)
+            tk.Label(self.table_frame, text=f"P{i+1}", fg="white", bg="#1e1e2f").grid(row=i+1, column=0, padx=5, pady=3)
             arr = tk.Entry(self.table_frame, width=10)
             burst = tk.Entry(self.table_frame, width=10)
-            arr.grid(row=i, column=1)
-            burst.grid(row=i, column=2)
+            arr.grid(row=i+1, column=1)
+            burst.grid(row=i+1, column=2)
             arr.insert(0, "0")
             burst.insert(0, "5")
             self.entries.append((arr, burst))
