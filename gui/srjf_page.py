@@ -9,7 +9,7 @@ class SRJFPage(tk.Frame):
         super().__init__(parent, bg="#1e1e2f")
         self.controller = controller
 
-        tk.Label(self, text="🟡 Shortest Remaining Time First",
+        tk.Label(self, text="🟡 Shortest Remaining Job First",
                  font=("Helvetica", 22, "bold"), fg="white", bg="#1e1e2f").pack(pady=20)
 
         self.num_processes = tk.IntVar(value=3)

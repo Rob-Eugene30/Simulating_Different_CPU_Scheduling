@@ -14,7 +14,7 @@ def srjf(processes):
             ready.append(processes.pop(0))
         
         if ready:
-            #sorting ng shortest remaining time
+            #sorting ng shortest remaining job
             ready.sort(key=lambda x: remaining[x['pid']])
             p = ready[0]
             remaining[p['pid']] -= 1
