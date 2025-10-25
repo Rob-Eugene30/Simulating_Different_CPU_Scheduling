@@ -11,6 +11,8 @@ class MenuPage(tk.Frame):
                          font=("Helvetica", 22, "bold"), fg="white", bg="#1e1e2f")
         title.pack(pady=40)
 
+        ttk.Button(self, text="🔴 First-Come, First-Serve",
+                   command=lambda: controller.show_frame("FCFSPage")).pack(pady=10)
         ttk.Button(self, text="🔵 Longest Remaining Job First",
                    command=lambda: controller.show_frame("LRJFPage")).pack(pady=10)
         ttk.Button(self, text="🟢 Round Robin",
