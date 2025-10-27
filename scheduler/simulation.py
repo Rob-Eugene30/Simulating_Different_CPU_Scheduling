@@ -2,6 +2,7 @@ from scheduler.lrjf import lrjf
 from scheduler.rr import round_robin
 from scheduler.srjf import srjf
 from scheduler.fcfs import fcfs
+from scheduler.sjf import sjf
 
 def run_simulation(algo, processes, quantum=None):
     """Dispatch simulation to appropriate algorithm."""
@@ -13,5 +14,7 @@ def run_simulation(algo, processes, quantum=None):
         return srjf(processes)
     elif algo == "FCFS":
         return fcfs(processes)
+    elif algo == "SJF":
+        return sjf(processes)
     else:
         raise ValueError(f"Invalid algorithm: {algo}")

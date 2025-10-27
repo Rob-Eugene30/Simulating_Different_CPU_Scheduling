@@ -11,5 +11,6 @@ from .lrjf_page import LRJFPage
 from .rr_page import RRPage
 from .srjf_page import SRJFPage
 from .battle_royal_page import BattleRoyalPage
+from .sjf_page import SJFPage
 
-__all__ = ["WelcomePage", "MenuPage", "FCFSPage", "LRJFPage", "RRPage", "SRJFPage", "BattleRoyalPage"]
+__all__ = ["WelcomePage", "MenuPage", "FCFSPage", "LRJFPage", "RRPage", "SRJFPage", "BattleRoyalPage", "SJFPage"]
