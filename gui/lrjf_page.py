@@ -1,69 +1,183 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+import customtkinter as ctk
+from tkinter import messagebox
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scheduler.simulation import run_simulation
 from scheduler.utils import to_dataframe, compute_averages, create_gantt_chart
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from gui.scrollable_frame import ScrollableFrame
 
-class LRJFPage(tk.Frame):
+
+class LRJFPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, bg="#1e1e2f")
+        super().__init__(parent, fg_color="#0b0c10")
         self.controller = controller
 
-        tk.Label(self, text="🔵 Longest Remaining Job First",
-                 font=("Helvetica", 22, "bold"), fg="white", bg="#1e1e2f").pack(pady=20)
+        # === Scrollable region ===
+        scroll_area = ScrollableFrame(self, fg_color="#0b0c10")
+        scroll_area.pack(expand=True, fill="both")
+        content = scroll_area.scrollable_frame  # All widgets go inside here
 
-        self.num_processes = tk.IntVar(value=3)
-        ttk.Label(self, text="Number of Processes:").pack()
-        ttk.Entry(self, textvariable=self.num_processes).pack(pady=5)
+        # === Header ===
+        header_frame = ctk.CTkFrame(content, fg_color="transparent")
+        header_frame.pack(fill="x", pady=(10, 20))
+
+        title_label = ctk.CTkLabel(
+            header_frame,
+            text="🔴 Longest Remaining Job First (LRJF) Scheduling",
+            font=("Orbitron", 26, "bold"),
+            text_color="#f87171",
+        )
+        title_label.pack(side="left", padx=30, pady=10)
+
+        back_button = ctk.CTkButton(
+            header_frame,
+            text="⬅ Back to Menu",
+            fg_color="#1f2833",
+            hover_color="#ef4444",
+            text_color="white",
+            corner_radius=12,
+            width=150,
+            height=40,
+            font=("Helvetica", 13, "bold"),
+            command=lambda: controller.show_frame("MenuPage"),
+        )
+        back_button.pack(side="right", padx=30, pady=10)
+
+        # === Input Frame ===
+        self.input_frame = ctk.CTkFrame(content, fg_color="#111827", corner_radius=12)
+        self.input_frame.pack(pady=10, padx=40, fill="x")
+
+        self.num_processes = ctk.IntVar(value=3)
+
+        ctk.CTkLabel(
+            self.input_frame,
+            text="Number of Processes:",
+            text_color="#f87171",
+            font=("Helvetica", 14, "bold"),
+        ).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+
+        ctk.CTkEntry(self.input_frame, textvariable=self.num_processes, width=100).grid(
+            row=0, column=1, padx=10, pady=10, sticky="w"
+        )
+
+        ctk.CTkButton(
+            self.input_frame,
+            text="Set Processes",
+            fg_color="#f87171",
+            hover_color="#fca5a5",
+            text_color="#0b0c10",
+            corner_radius=12,
+            command=self.make_process_table,
+        ).grid(row=0, column=2, padx=20, pady=10)
+
+        # === Dynamic Frames ===
+        self.table_frame = ctk.CTkFrame(content, fg_color="#0b0c10")
+        self.table_frame.pack(pady=20)
+
+        self.result_frame = ctk.CTkFrame(content, fg_color="#0b0c10")
+        self.result_frame.pack(pady=20, fill="both", expand=True)
 
         self.entries = []
-        self.table_frame = tk.Frame(self, bg="#1e1e2f")
-        self.table_frame.pack(pady=10)
 
-        ttk.Button(self, text="Set Processes", command=self.make_process_table).pack(pady=10)
-        ttk.Button(self, text="⬅ Back", command=lambda: controller.show_frame("MenuPage")).pack(side="bottom", pady=20)
-
+    # --------------------------------------------------------
     def make_process_table(self):
+        """Generate dynamic process entry fields."""
         for widget in self.table_frame.winfo_children():
             widget.destroy()
-        self.entries.clear()
-
-        #HEADERS
-        tk.Label(self.table_frame, text="Process", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=0, padx=5, pady=5)
-        tk.Label(self.table_frame, text="Arrival Time", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=1, padx=5, pady=5)
-        tk.Label(self.table_frame, text="Burst Time", fg="yellow", bg="#1e1e2f", font=("Helvetica", 10, "bold")).grid(row=0, column=2, padx=5, pady=5)
 
         n = self.num_processes.get()
+        self.entries = []
+        headers = ["Process", "Arrival Time", "Burst Time"]
+
+        for i, header in enumerate(headers):
+            ctk.CTkLabel(
+                self.table_frame,
+                text=header,
+                text_color="#f87171",
+                font=("Helvetica", 13, "bold"),
+            ).grid(row=0, column=i, padx=10, pady=5)
+
         for i in range(n):
-            tk.Label(self.table_frame, text=f"P{i+1}", fg="white", bg="#1e1e2f").grid(row=i+1, column=0, padx=5, pady=3) 
-            arr = tk.Entry(self.table_frame, width=10)
-            burst = tk.Entry(self.table_frame, width=10)
-            arr.grid(row=i+1, column=1)  
-            burst.grid(row=i+1, column=2) 
+            ctk.CTkLabel(
+                self.table_frame,
+                text=f"P{i+1}",
+                text_color="white",
+                font=("Helvetica", 12),
+            ).grid(row=i + 1, column=0, padx=10, pady=5)
+
+            arr = ctk.CTkEntry(self.table_frame, width=100)
+            burst = ctk.CTkEntry(self.table_frame, width=100)
+            arr.grid(row=i + 1, column=1, padx=10, pady=5)
+            burst.grid(row=i + 1, column=2, padx=10, pady=5)
             arr.insert(0, "0")
             burst.insert(0, "5")
+
             self.entries.append((arr, burst))
-        ttk.Button(self.table_frame, text="▶ Run Simulation", command=self.run_simulation).grid(columnspan=3, pady=10)
-    
+
+        ctk.CTkButton(
+            self.table_frame,
+            text="▶ Run Simulation",
+            fg_color="#4f46e5",
+            hover_color="#6d28d9",
+            text_color="white",
+            corner_radius=15,
+            width=200,
+            height=40,
+            font=("Helvetica", 14, "bold"),
+            command=self.run_simulation,
+        ).grid(columnspan=3, pady=20)
+
+    # --------------------------------------------------------
     def run_simulation(self):
+        """Run LRJF scheduling and display results."""
         try:
+            for widget in self.result_frame.winfo_children():
+                widget.destroy()
+
             processes = []
             for i, (arr, burst) in enumerate(self.entries):
                 processes.append({
-                    "pid": i+1,
+                    "pid": i + 1,
                     "arrival": int(arr.get()),
-                    "burst": int(burst.get())
+                    "burst": int(burst.get()),
                 })
 
             result, gantt = run_simulation("LRJF", processes)
             df = to_dataframe(result)
             avg_wait, avg_turn = compute_averages(df)
 
-            messagebox.showinfo("Results", f"Avg Waiting: {avg_wait:.2f}\nAvg Turnaround: {avg_turn:.2f}")
-
+            # === Gantt Chart ===
             fig = create_gantt_chart(gantt)
-            canvas = FigureCanvasTkAgg(fig, self)
-            canvas.get_tk_widget().pack()
+            fig.patch.set_facecolor("#0b0c10")
+            ax = fig.axes[0]
+            ax.set_facecolor("#0b0c10")
+            ax.tick_params(colors="white", labelsize=9)
+            ax.title.set_color("#f87171")
+
+            canvas = FigureCanvasTkAgg(fig, self.result_frame)
+            canvas.get_tk_widget().pack(pady=10)
             canvas.draw()
+
+            # === Results Summary ===
+            results_text = (
+                f"📊 Average Waiting Time: {avg_wait:.2f}\n"
+                f"🪐 Average Turnaround Time: {avg_turn:.2f}"
+            )
+
+            ctk.CTkLabel(
+                self.result_frame,
+                text=results_text,
+                font=("Helvetica", 15, "bold"),
+                text_color="#f87171",
+            ).pack(pady=20)
+
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    # --------------------------------------------------------
+    def reset_page(self):
+        """Reset all inputs and results when reopened."""
+        self.num_processes.set(3)
+        for frame in [self.table_frame, self.result_frame]:
+            for widget in frame.winfo_children():
+                widget.destroy()
+        self.entries.clear()
