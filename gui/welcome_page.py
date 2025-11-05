@@ -50,7 +50,7 @@ class WelcomePage(ctk.CTkFrame):
         # --- Footer ---
         self.footer = ctk.CTkLabel(
             content_frame,
-            text="Developed by NADS | Space Edition",
+            text="Developed by AwesomePeople | Space Edition",
             font=("Consolas", 12),
             text_color="#7f8c8d"
         )
