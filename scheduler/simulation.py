@@ -8,7 +8,7 @@ def run_simulation(algo, processes, quantum=None):
     """Dispatch simulation to appropriate algorithm."""
     if algo == "LRJF":
         return lrjf(processes)
-    elif algo == "Round Robin":
+    elif algo == "RR":
         return round_robin(processes, quantum)
     elif algo == "SRJF":
         return srjf(processes)
